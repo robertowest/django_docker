@@ -1,26 +1,30 @@
 # ¿Cómo ejecutar Django con Docker?
 
-Lo primero que haremos será crear una carpeta donde guardaremos todo el proyecto, para este ejemplo crearemos una carpeta llamada django_docker.
+Lo primero que haremos será crear una carpeta donde guardaremos todo el proyecto, para este ejemplo crearemos una carpeta llamada _django_docker_.
 
-```
+```bash
 mkdir django_docker
 cd django_docker
 ```
 
-Lo siguiente es crear el archivo requirements.txt para posteriormente decirle que librerías queremos instalar, en nuestro caso Django y psycopg2.
+Lo siguiente es crear el archivo _requirements.txt_ para posteriormente decirle que librerías queremos instalar, en este ejemplo, instalaremos lo básico, Django y psycopg2 (para conectar a Postgres).
 
-```
+```bash
 nano requirements.txt
+```
 
+```text
 django==3.2.7
 psycopg2==2.7.7
 ```
 
 Ahora vamos a crear un archivo Dockerfile sobre un contenedor basado en Python 3. En él crearemos un directorio llamado code y le diremos que es el directorio de trabajo, después copiaremos el archivo requirements.txt en el contenedor y utilizaremos pip para instalar las librerías que usaremos.
 
-```
+```bash
 nano Dockerfile
+```
 
+```text
 # Dockerfile
 FROM python:3.7-slim
 ENV PYTHONUNBUFFERED 1
@@ -50,10 +54,12 @@ COPY . /code/
 
 Ahora que ya tenemos esta parte, vamos a crear una carpeta llamada `.envs` y dentro de ella un archivo llamado `.postgres` donde guardaremos nuestras variables de entorno que se utilizarán más adelante en el contenedor de postgres:
 
-```
+```bash
 mkdir .envs
 nano .envs/.postgres
+```
 
+```text
 # PostgreSQL
 POSTGRES_HOST=db
 POSTGRES_PORT=5432
@@ -62,13 +68,15 @@ POSTGRES_USER=usuario
 POSTGRES_PASSWORD=usuario
 ```
 
-Ya tenemos lista toda la configuración, ahora nos toca crear el archivo docker-compose.yml
+Ya tenemos lista toda la configuración, ahora nos toca crear el archivo _docker-compose.yml_
 
 **NOTA**: recomiendo utilizar docker separados, uno para postgres y otro para django
 
-```
+```bash
 nano docker-compose.yml
+```
 
+```text
 version: '3'
 
 services:
@@ -91,27 +99,27 @@ services:
       - db
 ```
 
-En el servicio db en volumes le hemos dicho que queremos montar nuestra carpeta en ./postgres/data (deberéis crearla previamente) con la carpeta del contenedor de postgres que es /var/lib/postgresql/data y es donde se almacenan todos los datos generados en postgres, de esta manera aunque paremos el contenedor seguiremos manteniendo los cambios.
+En el servicio db en volumes le hemos dicho que queremos montar nuestra carpeta en _./postgres/data_ (deberéis crearla previamente) con la carpeta del contenedor de postgres que es _/var/lib/postgresql/data_ y es donde se almacenan todos los datos generados en postgres, de esta manera aunque paremos el contenedor seguiremos manteniendo los cambios.
 
-```
+```bash
 mkdir -p ./postgres/data
 ```
 
-Una vez hecho esto crearemos el proyecto con la siguiente orden, sustituir <nombre-proyecto> por el nombre que le queráis poner. Yo suelo crear la carpeta de proyecto y siempre llamo **config** a la carpeta que contiene el directorio inicial de django (donde se almacena settings.py).
+Una vez hecho esto crearemos el proyecto con la siguiente orden, sustituir [nombre-proyecto] por el nombre que le queráis poner. Yo suelo crear la carpeta de proyecto y siempre llamo **config** a la carpeta que contiene el directorio inicial de django (donde se almacena _settings.py_).
 
-```
-docker-compose run web django-admin startproject <nombre-proyecto> .
+```bash
+docker-compose run web django-admin startproject [nombre-proyecto] .
 ```
 
 Para finalizar la construcción del contenedor lanzaremos la ordern build
 
-```
+```bash
 docker-compose build
 ```
 
-Ahora que ya tenemos el proyecto creado, modificaremos el archivo _settings.py_ del proyecto de Django, para ello en nuestra carpeta raíz, buscamos en <nombre-proyecto>/settings.py y realizamos las siguientes modificaciones para poder comunicarnos con nuestra base de datos.
+Ahora que ya tenemos el proyecto creado, modificaremos el archivo _settings.py_ del proyecto de Django, para ello en nuestra carpeta raíz, buscamos en _[nombre-proyecto]/settings.py_ y realizamos las siguientes modificaciones para poder comunicarnos con nuestra base de datos.
 
-```
+```text
 import os     # agregamos en la primera línea
 
 ALLOWED_HOSTS = ['*']
@@ -135,7 +143,7 @@ TIME_ZONE = 'America/Argentina/Tucuman'
 
 Con esto ya estaría todo listo..., lanzamos el servicio y ya deberíamos tener nuestro proyecto funcionando.
 
-```
+```bash
 docker-compose up
 ```
 
@@ -144,14 +152,14 @@ Solo nos queda acceder desde aquí http://localhost:8000
 
 Para comprobar que podemos acceder al admin de Django haremos el _makemigrations_ y _migrate_ para crear las tablas en la base de datos, para ello ahora lo tendremos que lanzar de esta forma:
 
-```
+```bash
 docker-compose run --rm web python manage.py makemigrations
 docker-compose run --rm web python manage.py migrate
 ```
 
 Y ahora crearemos el super usuario para poder entrar al panel con la siguiente orden:
 
-```
+```bash
 docker-compose run --rm web python manage.py createsuperuser --username admin --email admin@correo.com
 ```
 
