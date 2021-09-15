@@ -1,4 +1,4 @@
-# Django con Docker
+# ¿Cómo ejecutar Django con Docker?
 
 Lo primero que haremos será crear una carpeta donde guardaremos todo el proyecto, para este ejemplo crearemos una carpeta llamada django_docker.
 
