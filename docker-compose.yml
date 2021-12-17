@@ -1,21 +1,25 @@
 version: '3'
 
 services:
-  db:
-    image: postgres:13.3
-    env_file:
-      - ./postgresql.env
-    volumes:
-      - ./postgres/data:/var/lib/postgresql/data      
+  # db:
+  #   image: postgres:13.3
+  #   container_name: postgres
+  #   env_file:
+  #     - ./postgres/postgres.env
+  #   volumes:
+  #     - ./postgres/data:/var/lib/postgresql/data
+    
   web:
     build: .
     image: django:3.2
+    container_name: django
     command: python manage.py runserver 0.0.0.0:8000
     env_file:
-      - ./.envs/.postgres
+      - ./postgres/postgres.env
     volumes:
-      - .:/code
+      - ./code:/code
     ports:
       - "8000:8000"
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
+    restart: always

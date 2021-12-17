@@ -51,10 +51,10 @@ RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
 COPY . /code/
 
-# OPCIONAL: podemos crear un usuario 1000 para no tener problemas con los permisos
-RUN useradd -ms /bin/bash usuario
-RUN chown -R usuario:usuario /code
-USER usuario
+# # OPCIONAL: podemos crear un usuario 1000 para no tener problemas con los permisos
+# RUN useradd -ms /bin/bash usuario
+# RUN chown -R usuario:usuario /code
+# USER usuario
 ```
 
 Ahora que ya tenemos esta parte, nos centraremos en el contenedor para PostgreSQL, crearemos una carpeta donde almacenaremos nuestra base de datos y los archivos de configuración necesarios. El archivo que contendrá nuestras variables de entorno lo llamaremos *postgres.env*.

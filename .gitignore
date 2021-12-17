@@ -330,3 +330,5 @@ fabric.properties
 *.sh
 *.sqlite3
 *.zip
+
+code/*
