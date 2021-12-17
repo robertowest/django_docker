@@ -166,3 +166,10 @@ docker-compose run --rm web python manage.py createsuperuser --username admin --
 ```
 
 Levantamos nuevamente nuestro contenedor `docker-compose up` y accedemos a http://localhost:8000/admin y comprobamos que podemos realizar el login sin problema.
+
+
+
+
+
+### pra acceder al contenedor con otro usuario
+docker run -it -u root django:3.2 bash
