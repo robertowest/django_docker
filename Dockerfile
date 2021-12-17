@@ -1,4 +1,6 @@
-FROM python:3.7-slim
+FROM python:3.7
+
+ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # instalacion de paquetes (--no-install-recommends)
@@ -22,3 +24,8 @@ COPY requirements.txt /code/
 RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
 COPY . /code/
+
+# creamos usuario 1000 para no tener problemas con los permisos
+RUN useradd -ms /bin/bash usuario
+RUN chown -R usuario:usuario /code
+USER usuario
